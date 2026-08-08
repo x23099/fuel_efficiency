@@ -1,52 +1,14 @@
-const CACHE = 'fuel-app-v6';
-const ASSETS = [
-  './index.html',
-  './styles.css',
-  './overrides.css',
-  './app.js',
-  './manifest.webmanifest',
-  './icons/apple-touch-icon.png',
-  './icons/icon-192.png',
-  './icons/icon-512.png'
-];
-
-self.addEventListener('install', event => {
-  self.skipWaiting();
-  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
-});
+self.addEventListener('install', () => self.skipWaiting());
 
 self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys()
-      .then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key))))
-      .then(() => self.clients.claim())
-  );
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter(key => key.startsWith('fuel-app-')).map(key => caches.delete(key)));
+    await self.registration.unregister();
+    const clients = await self.clients.matchAll({ type: 'window' });
+    await Promise.all(clients.map(client => client.navigate(client.url).catch(() => undefined)));
+  })());
 });
 
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
-
-  if (event.request.mode === 'navigate') {
-    const indexUrl = new URL('./index.html', self.registration.scope);
-    event.respondWith(
-      fetch(indexUrl, { cache: 'no-cache' })
-        .then(response => {
-          const copy = response.clone();
-          caches.open(CACHE).then(cache => cache.put('./index.html', copy));
-          return response;
-        })
-        .catch(() => caches.match('./index.html'))
-    );
-    return;
-  }
-
-  event.respondWith(
-    caches.match(event.request).then(cached => cached || fetch(event.request).then(response => {
-      if (response.ok && !response.redirected) {
-        const copy = response.clone();
-        caches.open(CACHE).then(cache => cache.put(event.request, copy));
-      }
-      return response;
-    }))
-  );
-});
+// Intentionally no fetch handler. iOS rejects redirected navigation responses
+// returned by a service worker on this hosting platform.
