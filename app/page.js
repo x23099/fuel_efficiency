@@ -1,2 +1,3 @@
-import { redirect } from 'next/navigation';
-export default function Page() { redirect('/index.html'); }
+export default function Page() {
+  return <main><meta httpEquiv="refresh" content="0; url=/index.html" /><a href="/index.html">Mile Noteを開く</a></main>;
+}
