@@ -2,6 +2,6 @@
   "name": "mile-note",
   "version": "1.0.0",
   "private": true,
-  "scripts": {"build": "next build", "start": "next start"},
-  "dependencies": {"next": "15.5.7", "react": "19.1.0", "react-dom": "19.1.0"}
+  "scripts": {"build": "vinext build && mkdir -p dist/.openai && cp .openai/hosting.json dist/.openai/hosting.json", "start": "vinext start"},
+  "dependencies": {"vinext": "latest", "vite": "latest", "react": "^19.2.6", "react-dom": "^19.2.6", "react-server-dom-webpack": "^19.2.6"}
 }
