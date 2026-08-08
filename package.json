@@ -3,5 +3,5 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {"build": "vinext build && mkdir -p dist/.openai && cp .openai/hosting.json dist/.openai/hosting.json", "start": "vinext start"},
-  "dependencies": {"vinext": "latest", "vite": "latest", "react": "^19.2.6", "react-dom": "^19.2.6", "react-server-dom-webpack": "^19.2.6"}
+  "dependencies": {"vinext": "latest", "vite": "latest", "@vitejs/plugin-rsc": "latest", "react": "^19.2.6", "react-dom": "^19.2.6", "react-server-dom-webpack": "^19.2.6"}
 }
