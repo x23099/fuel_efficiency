@@ -1,4 +1,4 @@
-const CACHE='mile-note-v3';
+const CACHE='fuel-app-v4';
 const ASSETS=['./','./index.html','./styles.css','./overrides.css','./app.js','./manifest.webmanifest','./icons/icon.svg'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS))));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key))))));

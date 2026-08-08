@@ -6,20 +6,20 @@
   <meta name="theme-color" content="#f7f7f4">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Mile Note">
+  <meta name="apple-mobile-web-app-title" content="燃費計算アプリ">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="icons/icon.svg">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="overrides.css">
-  <title>Mile Note</title>
+  <title>燃費計算アプリ</title>
 </head>
 <body>
   <header class="app-header">
     <div>
       <p class="eyebrow" id="todayLabel"></p>
-      <h1>Mile Note</h1>
+      <h1>燃費計算アプリ</h1>
     </div>
-    <button class="icon-button" id="exportButton" aria-label="データを書き出す" title="データを書き出す">
+    <button class="icon-button" id="exportButton" aria-label="バックアップ" title="バックアップ">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 15v5h14v-5"/></svg>
     </button>
   </header>
@@ -92,6 +92,14 @@
       <label class="file-label">レシート・明細・写真<input type="file" name="attachment" accept="image/*,.pdf" capture="environment"><span id="fileName">写真またはPDFを選択</span></label>
       <button class="primary-button" type="submit">記録を保存</button>
     </form>
+  </dialog>
+  <dialog id="backupModal">
+    <div class="backup-panel">
+      <div class="modal-header"><div><h2>バックアップ</h2><p>記録を別のSafariやホーム画面版へ移せます。</p></div><button type="button" class="icon-button" id="closeBackupModal" aria-label="閉じる">×</button></div>
+      <button class="backup-action" id="downloadBackup" type="button"><strong>データを書き出す</strong><span>現在の記録をJSONファイルとして保存</span></button>
+      <label class="backup-action import-action"><strong>データを取り込む</strong><span>書き出したJSONから記録を復元</span><input id="importBackup" type="file" accept="application/json,.json"></label>
+      <p class="backup-note">取り込むと、この端末にある現在の記録はファイル内の記録に置き換わります。</p>
+    </div>
   </dialog>
   <div id="toast" role="status"></div>
   <script src="app.js"></script>

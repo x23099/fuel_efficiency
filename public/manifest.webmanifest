@@ -1,1 +1,1 @@
-{"name":"Mile Note - 車の記録","short_name":"Mile Note","lang":"ja","start_url":"./","display":"standalone","background_color":"#f7f7f4","theme_color":"#f7f7f4","icons":[{"src":"icons/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}
+{"name":"燃費計算アプリ","short_name":"燃費計算","lang":"ja","start_url":"./index.html","scope":"./","display":"standalone","background_color":"#f7f7f4","theme_color":"#f7f7f4","icons":[{"src":"icons/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}
