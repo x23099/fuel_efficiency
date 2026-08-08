@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f7f4">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="燃費計算アプリ">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="overrides.css">
+  <title>燃費計算アプリ</title>
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <p class="eyebrow" id="todayLabel"></p>
+      <h1>燃費計算アプリ</h1>
+    </div>
+    <button class="icon-button" id="exportButton" aria-label="バックアップ" title="バックアップ">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 15v5h14v-5"/></svg>
+    </button>
+  </header>
+
+  <main>
+    <section class="view active" id="homeView" data-view="home">
+      <div class="hero-metric">
+        <p>直近の燃費</p>
+        <div><strong id="latestEconomy">--</strong><span> km/L</span></div>
+        <small id="latestDate">最初の給油を記録しましょう</small>
+      </div>
+      <div class="stat-grid">
+        <article><span>平均燃費</span><strong id="averageEconomy">--</strong><small>km/L</small></article>
+        <article><span>推定航続距離</span><strong id="estimatedRange">--</strong><small>km / 37L</small></article>
+        <article><span>今年の走行</span><strong id="yearDistance">0</strong><small>km</small></article>
+        <article><span>今年の支出</span><strong id="yearExpense">¥0</strong><small>合計</small></article>
+      </div>
+      <div class="section-heading"><h2>最近の記録</h2><button class="text-button" data-go="records">すべて見る</button></div>
+      <div id="recentList" class="record-list"></div>
+    </section>
+
+    <section class="view" id="fuelView" data-view="fuel">
+      <div class="page-title"><h2>給油を記録</h2><p>給油後にトリップメーターをリセットしてください。</p></div>
+      <form id="fuelForm" class="form-panel">
+        <label>給油日<input type="date" name="date" required></label>
+        <div class="field-row">
+          <label>走行距離<input type="number" name="distance" inputmode="decimal" min="0.1" step="0.1" placeholder="420.0" required><span class="unit">km</span></label>
+          <label>給油量<input type="number" name="liters" inputmode="decimal" min="0.1" max="37" step="0.01" placeholder="28.00" required><span class="unit">L</span></label>
+        </div>
+        <div class="live-result"><span>今回の燃費</span><strong id="fuelPreview">-- km/L</strong></div>
+        <label>支払額（任意）<input type="number" name="cost" inputmode="numeric" min="0" step="1" placeholder="4500"><span class="unit">円</span></label>
+        <label class="switch-row"><span>満タンにした</span><input type="checkbox" name="full" checked></label>
+        <label>メモ（任意）<textarea name="notes" rows="3" placeholder="給油場所、道路状況など"></textarea></label>
+        <button class="primary-button" type="submit">給油記録を保存</button>
+      </form>
+    </section>
+
+    <section class="view" id="recordsView" data-view="records">
+      <div class="page-title"><h2>車の記録</h2><p>整備も支出も、ひとつの履歴に。</p></div>
+      <div class="segmented" id="recordFilter">
+        <button class="active" data-filter="all">すべて</button><button data-filter="maintenance">整備</button><button data-filter="repair">修理</button><button data-filter="custom">カスタム</button><button data-filter="expense">支出</button>
+      </div>
+      <button class="add-record-button" id="openRecordModal"><span>＋</span> 記録を追加</button>
+      <div id="recordList" class="record-list"></div>
+    </section>
+
+    <section class="view" id="analyticsView" data-view="analytics">
+      <div class="page-title"><h2>分析</h2><p>燃費と維持費の変化を確認できます。</p></div>
+      <div class="segmented compact" id="periodControl"><button data-months="3" class="active">3か月</button><button data-months="6">6か月</button><button data-months="12">1年</button><button data-months="0">全期間</button></div>
+      <section class="chart-section"><div class="chart-title"><h3>燃費推移</h3><strong id="chartAverage">-- km/L</strong></div><canvas id="economyChart" height="230"></canvas><div id="emptyChart" class="empty-chart">2回以上の給油でグラフを表示します</div></section>
+      <section class="chart-section"><div class="chart-title"><h3>月別支出</h3><strong id="expenseTotal">¥0</strong></div><canvas id="expenseChart" height="210"></canvas></section>
+    </section>
+  </main>
+
+  <nav class="bottom-nav" aria-label="メインメニュー">
+    <button class="active" data-target="home"><svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v10h-6v-6H9v6H3Z"/></svg><span>概要</span></button>
+    <button data-target="fuel"><svg viewBox="0 0 24 24"><path d="M6 3h9v18H6zM6 8h9m3-2 3 3v8a2 2 0 0 1-4 0v-5h-2"/></svg><span>給油</span></button>
+    <button data-target="records"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8m-8 4h8m-8 4h5"/></svg><span>記録</span></button>
+    <button data-target="analytics"><svg viewBox="0 0 24 24"><path d="M4 20V10m6 10V4m6 16v-7m4 7H2"/></svg><span>分析</span></button>
+  </nav>
+
+  <dialog id="recordModal">
+    <form id="recordForm" class="modal-form">
+      <div class="modal-header"><h2>記録を追加</h2><button type="button" class="icon-button" id="closeRecordModal" aria-label="閉じる">×</button></div>
+      <label>種類<select name="type"><option value="maintenance">整備</option><option value="repair">故障・修理</option><option value="custom">カスタム</option><option value="inspection">車検</option><option value="insurance">保険</option><option value="tax">税金</option><option value="wash">洗車</option><option value="expense">その他支出</option></select></label>
+      <label>日付<input type="date" name="date" required></label>
+      <label>内容<input type="text" name="title" placeholder="エンジンオイル交換" required></label>
+      <div class="field-row"><label>走行距離<input type="number" name="odometer" inputmode="decimal" min="0" step="0.1" placeholder="任意"><span class="unit">km</span></label><label>金額<input type="number" name="cost" inputmode="numeric" min="0" step="1" placeholder="0"><span class="unit">円</span></label></div>
+      <label>メモ<textarea name="notes" rows="3" placeholder="使用した部品、作業内容など"></textarea></label>
+      <label class="file-label">レシート・明細・写真<input type="file" name="attachment" accept="image/*,.pdf" capture="environment"><span id="fileName">写真またはPDFを選択</span></label>
+      <button class="primary-button" type="submit">記録を保存</button>
+    </form>
+  </dialog>
+  <dialog id="backupModal">
+    <div class="backup-panel">
+      <div class="modal-header"><div><h2>バックアップ</h2><p>記録を別のSafariやホーム画面版へ移せます。</p></div><button type="button" class="icon-button" id="closeBackupModal" aria-label="閉じる">×</button></div>
+      <button class="backup-action" id="downloadBackup" type="button"><strong>データを書き出す</strong><span>現在の記録をJSONファイルとして保存</span></button>
+      <label class="backup-action import-action"><strong>データを取り込む</strong><span>書き出したJSONから記録を復元</span><input id="importBackup" type="file" accept="application/json,.json"></label>
+      <p class="backup-note">取り込むと、この端末にある現在の記録はファイル内の記録に置き換わります。</p>
+    </div>
+  </dialog>
+  <div id="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>
