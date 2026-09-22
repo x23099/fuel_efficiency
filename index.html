@@ -33,10 +33,11 @@
       </div>
       <div class="stat-grid">
         <article><span>平均燃費</span><strong id="averageEconomy">--</strong><small>km/L</small></article>
-        <article><span>推定航続距離</span><strong id="estimatedRange">--</strong><small>km / 37L</small></article>
+        <article><span>推定航続距離</span><strong id="estimatedRange">--</strong><small id="estimatedRangeUnit">km</small></article>
         <article><span>今年の走行</span><strong id="yearDistance">0</strong><small>km</small></article>
         <article><span>今年の支出</span><strong id="yearExpense">¥0</strong><small>合計</small></article>
       </div>
+      <div class="tank-setting"><span>燃料タンク容量：<strong id="tankCapacityLabel">未設定</strong></span><button class="text-button" id="openTankSettings" type="button">変更</button></div>
       <div class="section-heading"><h2>最近の記録</h2><button class="text-button" data-go="records">すべて見る</button></div>
       <div id="recentList" class="record-list"></div>
     </section>
@@ -47,7 +48,7 @@
         <label>給油日<input type="date" name="date" required></label>
         <div class="field-row">
           <label>走行距離<input type="number" name="distance" inputmode="decimal" min="0.1" step="0.1" placeholder="420.0" required><span class="unit">km</span></label>
-          <label>給油量<input type="number" name="liters" inputmode="decimal" min="0.1" max="37" step="0.01" placeholder="28.00" required><span class="unit">L</span></label>
+          <label>給油量<input type="number" name="liters" inputmode="decimal" min="0.1" step="0.01" placeholder="28.00" required><span class="unit">L</span></label>
         </div>
         <div class="live-result"><span>今回の燃費</span><strong id="fuelPreview">-- km/L</strong></div>
         <label>支払額（任意）<input type="number" name="cost" inputmode="numeric" min="0" step="1" placeholder="4500"><span class="unit">円</span></label>
@@ -81,6 +82,16 @@
     <button data-target="analytics"><svg viewBox="0 0 24 24"><path d="M4 20V10m6 10V4m6 16v-7m4 7H2"/></svg><span>分析</span></button>
   </nav>
 
+  <dialog id="tankSettingsModal" aria-labelledby="tankSettingsTitle" aria-describedby="tankSettingsDescription">
+    <form id="tankSettingsForm" class="modal-form">
+      <div class="modal-header"><h2 id="tankSettingsTitle">燃料タンク容量を設定</h2><button type="button" class="icon-button" id="closeTankSettings" aria-label="閉じる" hidden>×</button></div>
+      <p class="settings-description" id="tankSettingsDescription">はじめに、お車の燃料タンク容量を入力してください。この端末に保存し、次回からは入力不要です。</p>
+      <label>燃料タンク容量（L）<input type="number" name="tankCapacity" inputmode="decimal" min="0.1" step="0.1" placeholder="例：50" required></label>
+      <p class="settings-description">取扱説明書などに記載された容量を入力してください。推定航続距離と給油量の上限に使用します。あとから概要画面で変更できます。</p>
+      <p class="settings-error" id="tankSettingsError" role="alert" hidden></p>
+      <button class="primary-button" type="submit">保存してはじめる</button>
+    </form>
+  </dialog>
   <dialog id="recordModal">
     <form id="recordForm" class="modal-form">
       <div class="modal-header"><h2>記録を追加</h2><button type="button" class="icon-button" id="closeRecordModal" aria-label="閉じる">×</button></div>
@@ -96,9 +107,9 @@
   <dialog id="backupModal">
     <div class="backup-panel">
       <div class="modal-header"><div><h2>バックアップ</h2><p>記録を別のSafariやホーム画面版へ移せます。</p></div><button type="button" class="icon-button" id="closeBackupModal" aria-label="閉じる">×</button></div>
-      <button class="backup-action" id="downloadBackup" type="button"><strong>データを書き出す</strong><span>現在の記録をJSONファイルとして保存</span></button>
-      <label class="backup-action import-action"><strong>データを取り込む</strong><span>書き出したJSONから記録を復元</span><input id="importBackup" type="file" accept="application/json,.json"></label>
-      <p class="backup-note">取り込むと、この端末にある現在の記録はファイル内の記録に置き換わります。</p>
+      <button class="backup-action" id="downloadBackup" type="button"><strong>データを書き出す</strong><span>現在の記録とタンク容量をJSONファイルとして保存</span></button>
+      <label class="backup-action import-action"><strong>データを取り込む</strong><span>書き出したJSONから記録とタンク容量を復元</span><input id="importBackup" type="file" accept="application/json,.json"></label>
+      <p class="backup-note">取り込むと、この端末にある現在の記録はファイル内の記録に置き換わります。タンク容量も復元しますが、容量を含まない古いファイルでは現在の容量を維持します。</p>
     </div>
   </dialog>
   <div id="toast" role="status"></div>
